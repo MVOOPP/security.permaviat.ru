@@ -1,18 +1,19 @@
-<?php
-    session_start();
-    include("./settings/connect_datebase.php");
+<?php 
+session_start();
+include("./settings/connect_datebase.php");
 
-    if (isset($_SESSION['user']) && $_SESSION['user'] != -1) {
-        header("Location: user.php");
-        exit();
-    }
+
+if (isset($_SESSION['user']) && $_SESSION['user'] != -1) {
+    header("Location: user.php");
+    exit();
+}
 ?>
 <html>
 <head> 
     <meta charset="utf-8">
     <title>Авторизация</title>
 
-    <script src="https://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -64,15 +65,22 @@
             type: 'POST',
             data: { login: _login, password: _password },
             success: function (response) {
+                console.log("Ответ сервера (login_user.php):", response);
                 loading.style.display = "none";
+
                 if (response === "error") {
                     alert("Неверные данные!");
+                } else if (response === "expired") {
+                    alert("Ваш пароль устарел. Пожалуйста, смените его.");
+                    window.location.href = "change_password.php";
                 } else {
+                    alert("Код отправлен на почту!");
                     document.getElementById("codeVerification").style.display = "block";
-                    localStorage.setItem("sessionToken", response);
+                    localStorage.setItem("authSession", response);
                 }
             },
-            error: function () {
+            error: function (xhr) {
+                console.error("Ошибка сервера:", xhr.responseText);
                 loading.style.display = "none";
                 alert("Ошибка сервера!");
             }
@@ -87,12 +95,18 @@
             type: 'POST',
             data: { code: _code },
             success: function (response) {
-                if (response === "success") {
+                console.log("Ответ сервера (verify_code.php):", response);
+
+                if (response.trim() === "success") {
                     alert("Авторизация успешна!");
                     window.location.href = "user.php";
                 } else {
                     alert("Неверный код!");
                 }
+            },
+            error: function (xhr) {
+                console.error("Ошибка сервера:", xhr.responseText);
+                alert("Ошибка при проверке кода!");
             }
         });
     }
