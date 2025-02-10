@@ -2,7 +2,7 @@
 
 /**
  * Bengali PHPMailer language file: refer to English translation for definitive list
- * @package PHPMailer
+ * @package PHPMaile
  * @author Manish Sarkar <manish.n.manish@gmail.com>
  */
 
