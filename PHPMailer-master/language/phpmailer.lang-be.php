@@ -2,7 +2,7 @@
 
 /**
  * Belarusian PHPMailer language file: refer to English translation for definitive list
- * @package PHPMaile
+ * @package PHPMailer
  * @author Aleksander Maksymiuk <info@setpro.pl>
  */
 

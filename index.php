@@ -5,7 +5,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head> 
-		<meta charset="utf-8"> 
+		<meta charset="utf-8">
 		<title> WEB-безопасность </title>
 		
 		<link rel="stylesheet" href="style.css">
@@ -18,7 +18,7 @@
 			<a href=#><img src = "img/logo1.png"/></a>
 			<div class="name">
 				<a href="index.php">
-					<div class="subname">БЕЗОПАСНОСТЬ  ВЕБ-ПРИЛОЖЕНИЙ</div>
+					<div class="subname">БЗОПАСНОСТЬ  ВЕБ-ПРИЛОЖЕНИЙ</div>
 					Пермский авиационный техникум им. А. Д. Швецова
 				</a>
 			</div>
@@ -28,10 +28,9 @@
 		<div class="main">
 			<div class="content">
 				<div class="name">Новости:</div>
-
+				
 				<div>
-
-					<?php 
+					<?php
 						$query_news = $mysqli->query("SELECT * FROM `news`;");
 						while($read_news = $query_news->fetch_assoc()) {
 							$QueryMessages = $mysqli->query("SELECT * FROM `comments` WHERE `IdPost` = {$read_news["id"]}");

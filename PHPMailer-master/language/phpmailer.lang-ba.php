@@ -2,7 +2,7 @@
 
 /**
  * Bosnian PHPMailer language file: refer to English translation for definitive list
- * @package PHPMaile
+ * @package PHPMailer
  * @author Ermin Islamagić <ermin@islamagic.com>
  */
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Assamese PHPMailer language file: refer to English translation for definitive lis
+ * Assamese PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
  * @author Manish Sarkar <manish.n.manish@gmail.com>
  */

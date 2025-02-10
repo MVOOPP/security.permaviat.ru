@@ -2,7 +2,7 @@
 
 /**
  * Catalan PHPMailer language file: refer to English translation for definitive list
- * @package PHPMaile
+ * @package PHPMailer
  * @author Ivan <web AT microstudi DOT com>
  */
 
