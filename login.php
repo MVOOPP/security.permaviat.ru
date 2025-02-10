@@ -1,33 +1,23 @@
-<?php 
-session_start();
-include("settings/connect_datebase.php");
+<?php
+    session_start();
+    include("./settings/connect_datebase.php");
 
-// Если в сессии уже есть пользователь, но отсутствует обязательный параметр session_token,
-// то считаем, что сессия невалидна и очищаем её
-if (isset($_SESSION['user'])) {
-    if (!isset($_SESSION['session_token'])) {
-        // Очищаем сессию
-        session_unset();
-        session_destroy();
-        session_start();
-    } else if ($_SESSION['user'] != -1) {
-        // Если сессия полная (есть user и session_token) – перенаправляем в личный кабинет
+    if (isset($_SESSION['user']) && $_SESSION['user'] != -1) {
         header("Location: user.php");
         exit();
     }
-}
 ?>
-<!DOCTYPE HTML>
 <html>
 <head> 
     <meta charset="utf-8">
     <title>Авторизация</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.8.3.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="top-menu">
-    <a href="#"><img src="img/logo1.png" alt="Логотип"/></a>
+    <a href="#"><img src="img/logo1.png"/></a>
     <div class="name">
         <a href="index.php">
             <div class="subname">БЕЗОПАСНОСТЬ ВЕБ-ПРИЛОЖЕНИЙ</div>
@@ -62,22 +52,6 @@ if (isset($_SESSION['user'])) {
 </div>
 
 <script>
-    let userLatitude = null;
-    let userLongitude = null;
-
-    function getUserLocation(callback) {
-        $.get("https://ipwho.is/", function(data) {
-            if (data.success) {
-                userLatitude = data.latitude;
-                userLongitude = data.longitude;
-                console.log("Координаты по IPWhois:", userLatitude, userLongitude);
-            } else {
-                console.warn("Не удалось определить местоположение.");
-            }
-            callback();
-        }, "json");
-    }
-
     function LogIn() {
         let _login = document.getElementsByName("_login")[0].value;
         let _password = document.getElementsByName("_password")[0].value;
@@ -85,41 +59,23 @@ if (isset($_SESSION['user'])) {
 
         loading.style.display = "block";
 
-        getUserLocation(function () {
-            $.ajax({
-                url: 'ajax/login_user.php',
-                type: 'POST',
-                data: { 
-                    login: _login, 
-                    password: _password,
-                    latitude: userLatitude, 
-                    longitude: userLongitude 
-                },
-                success: function (response) {
-                    console.log("Ответ сервера (login_user.php):", response);
-                    loading.style.display = "none";
-
-                    if (response === "error") {
-                        alert("Неверные данные!");
-                    } else if (response === "expired") {
-                        alert("Ваш пароль устарел. Смените его.");
-                        window.location.href = "change_password.php";
-                    } else if (response === "code_required") {
-                        alert("Код отправлен на почту!");
-                        document.getElementById("codeVerification").style.display = "block";
-                    } else if (response === "success") {
-                        alert("Авторизация успешна!");
-                        window.location.href = "user.php";
-                    } else {
-                        alert("Неизвестная ошибка: " + response);
-                    }
-                },
-                error: function (xhr) {
-                    console.error("Ошибка сервера:", xhr.responseText);
-                    loading.style.display = "none";
-                    alert("Ошибка сервера!");
+        $.ajax({
+            url: 'ajax/login_user.php',
+            type: 'POST',
+            data: { login: _login, password: _password },
+            success: function (response) {
+                loading.style.display = "none";
+                if (response === "error") {
+                    alert("Неверные данные!");
+                } else {
+                    document.getElementById("codeVerification").style.display = "block";
+                    localStorage.setItem("sessionToken", response);
                 }
-            });
+            },
+            error: function () {
+                loading.style.display = "none";
+                alert("Ошибка сервера!");
+            }
         });
     }
 
@@ -131,23 +87,12 @@ if (isset($_SESSION['user'])) {
             type: 'POST',
             data: { code: _code },
             success: function (response) {
-                console.log("Ответ сервера (verify_code.php):", response);
-
-                if (response.trim() === "success") {
+                if (response === "success") {
                     alert("Авторизация успешна!");
                     window.location.href = "user.php";
-                } else if (response.trim() === "error_invalid_code") {
-                    alert("Неверный код! Попробуйте снова.");
-                } else if (response.trim() === "error_no_stored_code") {
-                    alert("Код не был найден. Войдите заново.");
-                    window.location.href = "login.php";
                 } else {
-                    alert("⚠️ Неизвестная ошибка!");
+                    alert("Неверный код!");
                 }
-            },
-            error: function (xhr) {
-                console.error("Ошибка сервера:", xhr.responseText);
-                alert("Ошибка при проверке кода!");
             }
         });
     }
